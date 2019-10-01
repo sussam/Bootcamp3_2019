@@ -42,7 +42,6 @@ exports.create = function (req, res) {
       res.status(400).send(err);
     } else {
       res.json(listing);
-      console.log(listing)
     }
   });
 };
@@ -61,22 +60,22 @@ exports.update = function (req, res) {
   listing.code = req.body.code;
   listing.name = req.body.name;
   listing.address = req.body.address;
-  /*save the coordinates (located in req.results if there is an address property) */
-  if (req.body.address) {
+
+  if (req.results) {
     listing.coordinates = {
       latitude: req.results.lat,
-      longitutde: req.results.lng
-    }
+      longitude: req.results.lng
+    };
   }
+  /*save the coordinates (located in req.results if there is an address property) */
+
   /* Save the listing */
   listing.save(function (err) {
     if (err) {
       console.log(err);
       res.status(400).send(err);
-    }
-    else {
+    } else {
       res.json(listing);
-      console.log("updated")
     }
   });
 };
@@ -86,26 +85,22 @@ exports.delete = function (req, res) {
   var listing = req.listing;
 
   /* Add your code to remove the listins */
+
   listing.remove(function (err) {
     if (err) {
-      console.error(err);
-      return;
+      console.log(err);
+      res.status(400).send(err);
+    } else {
+      res.end();
     }
-    else {
-      res.end()
-      console.log("deleted");
-      return;
-    }
-  });
+  })
 };
 
 /* Retreive all the directory listings, sorted alphabetically by listing code */
 exports.list = function (req, res) {
-  /* Add your code */
-  mongoose.model('Listing', Listing.listingSchema).find({}, function (err, listings) {
+  Listing.find().sort('code').exec(function (err, listings) {
     if (err) {
-      console.error(err);
-      return;
+      res.status(400).send(err);
     }
     else {
       res.json(listings);

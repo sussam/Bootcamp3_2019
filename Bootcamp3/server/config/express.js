@@ -26,7 +26,6 @@ module.exports.init = function () {
   app.use('/', express.static(__dirname + '/../../client'));
 
   /* The next three middleware are important to the API that we are bulding */
-  app.use('/public', express.static(__dirname + '/../../public'))
 
   /* Request Handler for route /api/lisings
      Update the code to meet the required format - app.use('/api/listings', appropriateMiddlewWare)
